@@ -1,0 +1,51 @@
+---
+jobs:
+
+- name: build
+  plan:
+  - get: source
+    trigger: true
+  - put: version
+    params:
+      bump: minor
+  - task: build-image
+    privileged: true
+    config:
+      platform: linux
+      image_resource: {type: registry-image, source: {repository: vito/oci-build-task, tag: "0.1.0"}}
+      inputs: [{name: source}]
+      outputs: [{name: image}]
+      caches: [{path: cache}]
+      run: {path: build}
+      params:
+        CONTEXT: source
+  - put: image
+    params:
+      image: image/image.tar
+      additional_tags: version/version
+
+resources:
+
+- name: source
+  type: git
+  icon: github-circle
+  source:
+    branch: master
+    uri: https://github.com/boclips/manifest-generator.git
+
+- name: version
+  type: semver
+  icon: github-circle
+  source:
+    driver: git
+    uri: git@github.com:boclips/versions.git
+    branch: master
+    file: manifest-generator
+    private_key: ((versions.repo-key))
+
+- name: image
+  type: registry-image
+  source:
+    repository: boclipsconcourse/manifest-generator
+    username: boclipsconcourse
+    password: ((docker-hub.password))
