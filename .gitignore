@@ -1,0 +1,10 @@
+.stack-work/
+infrastructure.cabal
+bin/release
+bin/render
+bin/intero
+bin/hlint
+bin/brittany
+bin/refactor
+bin/codex
+bin/hasktags
