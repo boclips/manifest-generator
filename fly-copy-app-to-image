@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+cwd="$(cd "$(dirname "$0")" && pwd)"
+
+fly --target ci \
+    execute \
+    --privileged \
+    --config "$cwd/pipeline/tasks/copy-app-to-image.yaml" \
+    --input source="$cwd" \
+    --input bin="$cwd/fly-bin" \
+    --output image=fly-image

@@ -12,18 +12,7 @@ jobs:
     file: source/pipeline/tasks/build-app.yaml
   - task: copy-app-to-image
     privileged: true
-    config:
-      platform: linux
-      image_resource: {type: registry-image, source: {repository: vito/oci-build-task, tag: "0.1.0"}}
-      inputs:
-      - name: source
-      - name: bin
-        path: source/bin
-      outputs: [{name: image}]
-      caches: [{path: cache}]
-      run: {path: build}
-      params:
-        CONTEXT: source
+    file: source/pipeline/tasks/copy-app-to-image.yaml
   - put: image
     params:
       image: image/image.tar

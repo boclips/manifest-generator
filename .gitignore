@@ -8,3 +8,5 @@ bin/brittany
 bin/refactor
 bin/codex
 bin/hasktags
+/fly-bin
+/fly-image
