@@ -1,0 +1,20 @@
+---
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: fpco/stack-build
+    tag: "lts-13.8"
+
+inputs:
+- name: source
+
+outputs:
+- name: bin
+
+run:
+  path: source/pipeline/scripts/build-app
+
+caches:
+- path: ../../../root/.stack

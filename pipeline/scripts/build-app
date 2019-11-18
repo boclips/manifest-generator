@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -e
+
+stack \
+    --no-terminal \
+    --stack-yaml=source/stack.yaml \
+    build \
+    --test \
+    --ghc-options=-Werror
+
+cp "source/$(stack path --dist-dir)/build/release/release" bin/
