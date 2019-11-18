@@ -36,7 +36,7 @@ library:
   - text
   - yaml
 tests:
-  infrastructure-test:
+  manifest-generator-test:
     source-dirs: test
     main: Spec.hs
     ghc-options:
@@ -50,7 +50,7 @@ tests:
     - -Wincomplete-uni-patterns
     - -Wredundant-constraints
     dependencies:
-    - infrastructure
+    - manifest-generator
     - bytestring
     - containers
     - foldl
@@ -64,11 +64,11 @@ maintainer: engineering@boclips.com
 dependencies:
 - base >= 4.7 && < 5
 - turtle >= 1.5.12 && < 1.6.0
-name: infrastructure
+name: manifest-generator
 version: 0.1.0.0
 extra-source-files: []
 author: Avrono
-github: boclips/infrastructure
+github: boclips/manifest-generator
 executables:
   render:
     source-dirs: app
@@ -86,7 +86,7 @@ executables:
     - -Wincomplete-uni-patterns
     - -Wredundant-constraints
     dependencies:
-    - infrastructure
+    - manifest-generator
     - bytestring
     - text
     - yaml
@@ -107,5 +107,5 @@ executables:
     - -Wincomplete-uni-patterns
     - -Wredundant-constraints
     dependencies:
-    - infrastructure
-description: Please see the README on GitHub at <https://github.com/boclips/infrastructure#readme>
+    - manifest-generator
+description: Boclips Kubernetes Manifest Generator

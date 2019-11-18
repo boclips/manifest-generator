@@ -1,5 +1,5 @@
 .stack-work/
-infrastructure.cabal
+/manifest-generator.cabal
 bin/release
 bin/render
 bin/intero
