@@ -3,11 +3,12 @@ jobs:
 
 - name: build
   plan:
-  - get: source
-    trigger: true
-  - put: version
-    params:
-      bump: minor
+  - in_parallel:
+    - get: source
+      trigger: true
+    - put: version
+      params:
+        bump: minor
   - task: build-app
     file: source/pipeline/tasks/build-app.yaml
   - task: copy-app-to-image
