@@ -12,7 +12,6 @@ import           Turtle                         ( FilePath
                                                 , optPath
                                                 , options
                                                 , optText
-                                                , die
                                                 )
 import           Data.Yaml                      ( ToJSON
                                                 , encode
@@ -65,4 +64,3 @@ main = do
     Boclips manifest -> BS.putStr $ concatYAMLDocs $ k8sResourcesForEnvironment
       (environment userOptions)
       (outputResources manifest (Version (version userOptions)))
-    K8s -> die "File doesn't exist"

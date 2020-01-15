@@ -24,13 +24,9 @@ import           Turtle                  hiding ( rm )
 
 import qualified Data.Yaml                     as Yaml
 
-import           EnvParse
-import           Environments
 import           Git
-import           K8s.Env
 import           K8s.Resource
 import           ReleaseConfig
-import           TemplateRendering
 import           Render
 
 writeRenderedResource :: GitContext IO -> EnvironmentResource -> IO ()
@@ -48,27 +44,10 @@ release manifestPath = do
   git         <- clone (format fp releaseInputDir) releaseOutputDir
   appName     <- case style of
     Boclips Bomanifest { app } -> pure (fromText app)
-    K8s                        -> getRepositoryName "image/repository"
 
   case style of
     Boclips manifest -> for_ (outputResources manifest (Version version))
                              (writeRenderedResource git)
-    K8s -> do
-      inputManifestsDir  <- fromText <$> requireEnv "INPUT_MANIFESTS_DIR"
-      productionReplicas <- requireEnv "PRODUCTION_REPLICAS"
-      stagingReplicas    <- requireEnv "STAGING_REPLICAS"
-      testingReplicas    <- defaultingEnv "TESTING_REPLICAS" stagingReplicas
-      let envs = mkEnvironments $ Vars
-            { testingReplicas
-            , stagingReplicas
-            , productionReplicas
-            , version
-            }
-      releasePath <- preparedReleasePath git appName envs
-      for_ envs $ \environ -> TemplateRendering.renderTemplates
-        (releasePath environ)
-        inputManifestsDir
-        environ
 
   git . add $ ["."]
 
@@ -101,25 +80,11 @@ commitMessage appName sourceSHA remoteUrl version = unlines
 resourceToLines :: Resource -> NonEmpty Line
 resourceToLines = textToLines . decodeUtf8 . Yaml.encode
 
-preparedReleasePath
-  :: GitContext IO -> FilePath -> [Env] -> IO (Env -> FilePath)
-preparedReleasePath git appName envs = do
-  git . rm $ envs <&> K8s.Env.name <&> (</> appName)
-  for_ envs $ \environ -> mktree (releasePath environ)
-  pure releasePath
- where
-  releasePath :: Env -> FilePath
-  releasePath k8sEnv = releaseOutputDir </> K8s.Env.name k8sEnv </> appName
-
 releaseInputDir :: FilePath
 releaseInputDir = fromText "release-manifests"
 
 releaseOutputDir :: FilePath
 releaseOutputDir = fromText "release-manifests-modified"
-
-getRepositoryName :: FilePath -> IO FilePath
-getRepositoryName srcPath =
-  filename . fromText . stripEnd <$> readTextFile srcPath
 
 requireEnv :: Text -> IO Text
 requireEnv envName = do

@@ -25,25 +25,19 @@ import           Turtle                         ( FilePath
                                                 , fp
                                                 )
 
-import qualified Turtle
-
 import           Values
 
 data Priority = Critical | Noncritical
   deriving (Show)
 
-data ManifestStyle = Boclips Bomanifest | K8s
+data ManifestStyle = Boclips Bomanifest
 
 manifestStyle :: FilePath -> IO ManifestStyle
 manifestStyle path = do
-  boManifestPresent <- Turtle.testfile path
-  if boManifestPresent
-    then do
-      contents <- decodeFileEither (unpack (format fp path))
-      case contents of
-        Left  e          -> die (Text.pack (show e))
-        Right bomanifest -> pure (Boclips bomanifest)
-    else pure K8s
+  contents <- decodeFileEither (unpack (format fp path))
+  case contents of
+    Left  e          -> die (Text.pack (show e))
+    Right bomanifest -> pure (Boclips bomanifest)
 
 data Vars = Vars
   { testingReplicas    :: !Text
